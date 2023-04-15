@@ -3,13 +3,15 @@ import logging as logger
 import sys
 
 #Config options
+guardianClass = None
 skipMasterTier = True
-skipMob = True
+skipMob = False
 skipRec = False
 skipRes = False
 skipDis = False
 skipInt = False
-skipStr = True
+skipStr = False
+
 
 class armorPiece:
     def __init__(self, info):
@@ -52,7 +54,7 @@ class armorPiece:
         if self == test or self.tier == "Exotic" or test.tier == "Exotic":
             return False
         #Check classes and slot are the same
-        if self.equippable == test.equippable and self.type == test.type:
+        if self.equippable == test.equippable and self.type == test.type and (self.equippable == guardianClass or guardianClass == True):
             #Skip if stats are completely identical
             if self.identicalStats(test):
                 return False
@@ -65,13 +67,29 @@ class armorPiece:
 
     #Simpler way to print armor piece
     def shortStr(self):
-        return str(self.name) + "," + str(self.equippable) + "," + str(self.type) + "," + str(self.power) + "," + str(
+        return str(self.name) + "," + str(self.equippable) + " " + str(self.type) + "," + str(self.power) + "," + str(
             self.total) + "," + str(self.masterTier)
+            
+    #Longer way to print armor piece
+    def longStr(self):
+        return str(self.name) + ", " + str(self.equippable) + " " + str(self.type) + ", " + str(self.power) + " power, " + str(
+            self.total) + " total stats, " + str(self.masterTier) + " energy"
 
 def run():
     #Prompting and config
     #print("Setup: Decide what parameters to use. Press Y for yes, any other key for no.")
-    global skipMasterTier, skipMob, skipRec, skipRes, skipDis, skipInt, skipStr
+    global skipMasterTier, skipMob, skipRec, skipRes, skipDis, skipInt, skipStr, guardianClass
+    
+    while guardianClass not in {'W', 'T', 'H', 'A'}:
+        guardianClass = input("Which class's armor do you want to search? W/T/H/A (A = all classes)\n").upper()[0]
+    if guardianClass == 'W':
+        guardianClass = 'Warlock'
+    elif guardianClass == 'T':
+        guardianClass = 'Titan'
+    elif guardianClass == 'H':
+        guardianClass = 'Hunter'
+    else:
+        guardianClass = True
 
     skipMasterTier = input("Ignore Masterwork Tier? Y/N (Default: Yes)\n") in ['Y', 'y', 'yes', 'Yes', 'YES']
     skipMob = input("Ignore Mobility? Y/N (Default: No)\n") in ['Y', 'y', 'yes', 'Yes', 'YES']
@@ -95,7 +113,6 @@ def run():
     if len(rawArmorList) == 0:
         logger.info("raw armor list was found empty, closing")
         sys.exit(1)
-         
         
     #List of all pieces
     for currentArmor in rawArmorList[2:]:
@@ -106,7 +123,7 @@ def run():
     for currentArmor in armorList:
         for testArmor in armorList:
             if currentArmor.isBetter(testArmor):
-                superiorityList.append((currentArmor.shortStr(), testArmor.shortStr()))
+                superiorityList.append((currentArmor.longStr(), testArmor.longStr()))
 
     #Lists of armor to keep and shard
     bestArmor = set([armor[0] for armor in superiorityList])
@@ -120,10 +137,10 @@ def run():
         simpleSuperiorityList.append([currentArmor, badArmorList])
 
     #Display
-    #for element in simpleSuperiorityList:
-        #print(element[0] + " is better than: " + str(element[1]) + "\n")
-    for i in worstArmor:
-        print(i)
+    for element in simpleSuperiorityList:
+        print(element[0] + " is better than:\n" + str(element[1]) + "\n")
+    #for i in worstArmor:
+    #    print(i)
     
     logger.info("Vault Spaces Saveable: " + str(len(worstArmor)))
 
