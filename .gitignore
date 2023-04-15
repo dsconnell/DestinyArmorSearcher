@@ -140,5 +140,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Mac garbage
-*.DS_Store
+# Mac file system trash
+**/.DS_Store
