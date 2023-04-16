@@ -74,6 +74,11 @@ class armorPiece:
     def longStr(self):
         return str(self.name) + ", " + str(self.equippable) + " " + str(self.type) + ", " + str(self.power) + " power, " + str(
             self.total) + " total stats, " + str(self.masterTier) + " energy"
+            
+    #Print armor piece for pasting into DIM
+    def dimStr(self):
+        return "\"" + str(self.name) + "\" power:" + str(self.power) + " basestat:total:" + str(
+            self.total) + " energycapacity:" + str(self.masterTier)
 
 def run():
     #Prompting and config
@@ -123,7 +128,7 @@ def run():
     for currentArmor in armorList:
         for testArmor in armorList:
             if currentArmor.isBetter(testArmor):
-                superiorityList.append((currentArmor.longStr(), testArmor.longStr()))
+                superiorityList.append((currentArmor.dimStr(), testArmor.dimStr()))
 
     #Lists of armor to keep and shard
     bestArmor = set([armor[0] for armor in superiorityList])
