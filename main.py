@@ -138,9 +138,14 @@ def run():
 
     #Display
     for element in simpleSuperiorityList:
-        print(element[0] + " is better than:\n" + str(element[1]) + "\n")
-    #for i in worstArmor:
-    #    print(i)
+        print(element[0] + " is better than:")
+        print(str(element[1]).replace("\', \'", "\n- ").replace("\', \"", "\n- ").replace("[\'","- ").replace("\']","").replace("\"]","")) # put each armor piece on its own line and take out brackets, comma seperators
+        print()
+        
+    print()
+    print("All armor to shard:")
+    for p in worstArmor:
+        print("- "+p)
     
     logger.info("Vault Spaces Saveable: " + str(len(worstArmor)))
 
